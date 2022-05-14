@@ -21,15 +21,16 @@ function isAllTrue(array, fn) {
     throw new Error('fn is not a function');
   }
 
-  if (!Array.isArray(array) || !array.length) {
+  if (Object.prototype.toString.call(array) !== '[object Array]' || !array.length) {
     throw new Error('empty array');
   }
 
-  for (const el of array) {
-    if (!fn(el)) {
+  for (const item of array) {
+    if (!fn(item)) {
       return false;
     }
   }
+
   return true;
 }
 
@@ -54,15 +55,16 @@ function isSomeTrue(array, fn) {
     throw new Error('fn is not a function');
   }
 
-  if (!Array.isArray(array) || !array.length) {
+  if (Object.prototype.toString.call(array) !== '[object Array]' || !array.length) {
     throw new Error('empty array');
   }
 
-  for (const el of array) {
-    if (fn(el)) {
+  for (const item of array) {
+    if (!fn(item)) {
       return true;
     }
   }
+
   return false;
 }
 
@@ -82,17 +84,17 @@ function returnBadArguments(fn, ...args) {
     throw new Error('fn is not a function');
   }
 
-  const bad = [];
+  const array = [];
 
-  for (const arg of args) {
+  for (const item of args) {
     try {
-      fn(arg);
+      fn(item);
     } catch {
-      bad.push(arg);
+      array.push(item);
     }
   }
 
-  return bad;
+  return array;
 }
 
 /*
@@ -119,42 +121,22 @@ function calculator(number = 0) {
 
   return {
     sum(...args) {
-      let result = number;
-
-      for (const arg of args) {
-        result += arg;
-      }
-      return result;
+      return args.reduce((prev, current) => prev + current, number);
     },
 
     dif(...args) {
-      let result = number;
-
-      for (const arg of args) {
-        result -= arg;
-      }
-      return result;
+      return args.reduce((prev, current) => prev - current, number);
     },
 
     div(...args) {
-      let result = number;
-
-      for (const arg of args) {
-        if (arg === 0) {
-          throw new Error('division by 0');
-        }
-        result /= arg;
+      if (args.includes(0) === true) {
+        throw new Error('division by 0');
       }
-      return result;
+      return args.reduce((prev, current) => prev / current, number);
     },
 
     mul(...args) {
-      let result = number;
-
-      for (const arg of args) {
-        result *= arg;
-      }
-      return result;
+      return args.reduce((prev, current) => prev * current, number);
     },
   };
 }
