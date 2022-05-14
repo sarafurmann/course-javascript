@@ -51,16 +51,14 @@ function isAllTrue(array, fn) {
    isSomeTrue([1, 2, 3, 4, 5], n => n > 20) // вернет false
  */
 function isSomeTrue(array, fn) {
+  if (!(typeof array === 'object' && 'length' in array && array.length)) {
+    throw 'empty array';
+  }
   if (typeof fn !== 'function') {
-    throw new Error('fn is not a function');
+    throw 'fn is not a function';
   }
-
-  if (Object.prototype.toString.call(array) !== '[object Array]' || !array.length) {
-    throw new Error('empty array');
-  }
-
-  for (const item of array) {
-    if (!fn(item)) {
+  for (let i = 0; i < array.length; i++) {
+    if (fn(array[i], i, array)) {
       return true;
     }
   }
@@ -86,11 +84,11 @@ function returnBadArguments(fn, ...args) {
 
   const array = [];
 
-  for (const item of args) {
+  for (let i = 0; i < args.length; i++) {
     try {
-      fn(item);
+      fn(args[i]);
     } catch {
-      array.push(item);
+      array.push(args[i]);
     }
   }
 
